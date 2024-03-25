@@ -11,7 +11,7 @@ const AudioPlayer = () => {
   useEffect(() => {
     const fetchMusicList = async () => {
       try {
-        const response = await fetch("http://localhost:3000/music-list"); // Replace with your server URL
+        const response = await fetch("https://lexy-music.onrender.com/music-list"); // Replace with your server URL
         if (!response.ok) {
           throw new Error("Failed to fetch music list");
         }
@@ -25,7 +25,7 @@ const AudioPlayer = () => {
     fetchMusicList();
   }, []);
 
-  const socket = io("http://localhost:3000"); // Replace with your server URL
+  const socket = io("https://lexy-music.onrender.com"); // Replace with your server URL
 
   socket.on("audioChunk", (chunk) => {
     setAudioChunks((prevChunks) => [...prevChunks, chunk]);
