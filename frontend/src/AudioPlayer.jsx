@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import "react-h5-audio-player/lib/styles.css";
+import Fuse from "fuse.js";
 
 const AudioPlayerSetup = () => {
   const audioRef = useRef(null);
@@ -10,6 +11,8 @@ const AudioPlayerSetup = () => {
   const [selectedMusic, setSelectedMusic] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchMusicList = async () => {
@@ -70,6 +73,19 @@ const AudioPlayerSetup = () => {
     }
   }, [isPlaying, audioChunks]);
 
+  useEffect(() => {
+    // Initialize Fuse.js with the music list
+    const fuse = new Fuse(musicList);
+
+    // Perform search when the search term changes
+    const results = fuse.search(searchTerm);
+    setSearchResults(results.map((result) => result.item));
+  }, [searchTerm, musicList]);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <div>
       <div className="flex items-center mx-[2vw] my-2 gap-2 bg-gray-100 w-[96vw] p-2">
@@ -92,18 +108,30 @@ const AudioPlayerSetup = () => {
           type="text"
           placeholder="Search music"
           className="flex-1 focus:outline-none bg-transparent text-md"
+          value={searchTerm}
+          onChange={handleSearch}
         />
       </div>
       <ul className="mx-[2vw]">
-        {musicList.map((music) => (
-          <li
-            key={music}
-            onClick={() => handlePlay(music)}
-            className="cursor-pointer hover:bg-gray-200 p-2 rounded-md"
-          >
-            {music.split(".mp3")[0]}
-          </li>
-        ))}
+        {searchResults.length > 0
+          ? searchResults.map((music) => (
+              <li
+                key={music}
+                onClick={() => handlePlay(music)}
+                className="cursor-pointer hover:bg-gray-200 p-2 rounded-md"
+              >
+                {music.split(".mp3")[0]}
+              </li>
+            ))
+          : musicList.map((music) => (
+              <li
+                key={music}
+                onClick={() => handlePlay(music)}
+                className="cursor-pointer hover:bg-gray-200 p-2 rounded-md"
+              >
+                {music.split(".mp3")[0]}
+              </li>
+            ))}
       </ul>
       {selectedMusic && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-100 p-4 flex flex-col gap-2">
