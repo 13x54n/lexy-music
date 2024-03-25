@@ -12,7 +12,9 @@ const AudioPlayer = () => {
     const fetchMusicList = async () => {
       try {
         // const response = await fetch("http://localhost:3000/music-list"); // Replace with your server URL
-        const response = await fetch("https://lexy-music.onrender.com/music-list"); // Replace with your server URL
+        const response = await fetch(
+          "https://lexy-music.onrender.com/music-list"
+        ); // Replace with your server URL
         if (!response.ok) {
           throw new Error("Failed to fetch music list");
         }
@@ -103,7 +105,19 @@ const AudioPlayer = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-gray-100 p-4">
         {selectedMusic && (
           <div>
-            <h3>Now Playing: {selectedMusic}</h3>
+            <div className="flex items-center gap-2">
+              <img
+                src="https://avatars.githubusercontent.com/u/135448616?v=4"
+                alt=""
+                className="h-9 w-9 rounded"
+              />
+              <div>
+                <h3>{selectedMusic.split("-")[0]}</h3>
+                <p className="text-sm font-medium text-gray-500">
+                  {selectedMusic.split("-")[1].split(".")[0]}
+                </p>
+              </div>
+            </div>
             <audio ref={audioRef} controls />
           </div>
         )}
