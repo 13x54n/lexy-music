@@ -1,5 +1,5 @@
 import React from "react";
-import AudioPlayer from "./AudioPlayer";
+import AudioPlayerSetup from "./AudioPlayer";
 
 const App = () => {
   return (
@@ -12,7 +12,7 @@ const App = () => {
         />
         <h1 className="jost text-xl">Lexy Music</h1>
       </div>
-      <AudioPlayer />
+      <AudioPlayerSetup />
     </div>
   );
 };

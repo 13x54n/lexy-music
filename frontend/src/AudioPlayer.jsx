@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
+import "react-h5-audio-player/lib/styles.css";
 
-const AudioPlayer = () => {
+const AudioPlayerSetup = () => {
   const audioRef = useRef(null);
   const [musicList, setMusicList] = useState([]);
   const [selectedMusic, setSelectedMusic] = useState(null);
@@ -11,10 +14,9 @@ const AudioPlayer = () => {
   useEffect(() => {
     const fetchMusicList = async () => {
       try {
-        // const response = await fetch("http://localhost:3000/music-list"); // Replace with your server URL
         const response = await fetch(
           "https://lexy-music.onrender.com/music-list"
-        ); // Replace with your server URL
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch music list");
         }
@@ -28,8 +30,7 @@ const AudioPlayer = () => {
     fetchMusicList();
   }, []);
 
-  // const socket = io("http://localhost:3000"); // Replace with your server URL
-  const socket = io("https://lexy-music.onrender.com"); // Replace with your server URL
+  const socket = io("https://lexy-music.onrender.com");
 
   socket.on("audioChunk", (chunk) => {
     setAudioChunks((prevChunks) => [...prevChunks, chunk]);
@@ -40,6 +41,10 @@ const AudioPlayer = () => {
   });
 
   const handlePlay = (filename) => {
+    if (isPlaying) {
+      audioRef.current.audio.current.pause();
+      setIsPlaying(false);
+    }
     setSelectedMusic(filename);
     setAudioChunks([]);
     socket.emit("stream-music", filename);
@@ -47,8 +52,6 @@ const AudioPlayer = () => {
   };
 
   useEffect(() => {
-    const audioElement = audioRef.current;
-
     if (isPlaying && audioChunks.length > 0) {
       const mergedChunks = new Uint8Array(
         audioChunks.reduce((acc, chunk) => acc + chunk.byteLength, 0)
@@ -62,8 +65,8 @@ const AudioPlayer = () => {
 
       const blob = new Blob([mergedChunks], { type: "audio/mpeg" });
       const objectURL = URL.createObjectURL(blob);
-      audioElement.src = objectURL;
-      audioElement.play();
+      audioRef.current.audio.current.src = objectURL;
+      audioRef.current.audio.current.play();
     }
   }, [isPlaying, audioChunks]);
 
@@ -117,11 +120,16 @@ const AudioPlayer = () => {
               </p>
             </div>
           </div>
-          <audio ref={audioRef} controls />
+          <AudioPlayer
+            ref={audioRef}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            // other propshere
+          />
         </div>
       )}
     </div>
   );
 };
 
-export default AudioPlayer;
+export default AudioPlayerSetup;
