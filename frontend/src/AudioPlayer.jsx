@@ -11,6 +11,7 @@ const AudioPlayer = () => {
   useEffect(() => {
     const fetchMusicList = async () => {
       try {
+        // const response = await fetch("http://localhost:3000/music-list"); // Replace with your server URL
         const response = await fetch("https://lexy-music.onrender.com/music-list"); // Replace with your server URL
         if (!response.ok) {
           throw new Error("Failed to fetch music list");
@@ -25,6 +26,7 @@ const AudioPlayer = () => {
     fetchMusicList();
   }, []);
 
+  // const socket = io("http://localhost:3000"); // Replace with your server URL
   const socket = io("https://lexy-music.onrender.com"); // Replace with your server URL
 
   socket.on("audioChunk", (chunk) => {
@@ -65,21 +67,47 @@ const AudioPlayer = () => {
 
   return (
     <div>
-      <h2>Music List</h2>
-      <ul>
+      <div className="flex items-center mx-[2vw] my-2 gap-2 bg-gray-100 w-[96vw] p-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+          />
+        </svg>
+
+        <input
+          type="text"
+          placeholder="Search music"
+          className="flex-1 focus:outline-none bg-transparent text-md"
+        />
+      </div>
+      <ul className="mx-[2vw]">
         {musicList.map((music) => (
-          <li key={music} onClick={() => handlePlay(music)}>
+          <li
+            key={music}
+            onClick={() => handlePlay(music)}
+            className="cursor-pointer hover:bg-gray-200 p-2 rounded-md"
+          >
             {music}
           </li>
         ))}
       </ul>
-      {selectedMusic && (
-        <div>
-          <h3>Now Playing: {selectedMusic}</h3>
-          <audio ref={audioRef} controls />
-        </div>
-      )}
-      {isPlaying && <p>Playing...</p>}
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-100 p-4">
+        {selectedMusic && (
+          <div>
+            <h3>Now Playing: {selectedMusic}</h3>
+            <audio ref={audioRef} controls />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
