@@ -104,7 +104,7 @@ const AudioPlayer = () => {
       </ul>
       {selectedMusic && (
         <div className="fixed bottom-0 left-0 right-0 bg-gray-100 p-4 flex">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-1 items-center gap-2">
             <img
               src="https://avatars.githubusercontent.com/u/135448616?v=4"
               alt=""
